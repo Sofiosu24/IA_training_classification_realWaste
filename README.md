@@ -172,8 +172,8 @@ Se aplica a **train, validation y test** porque el modelo debe ver el mismo rang
 
 | Parámetro | Valor | Justificación |
 |---|---|---|
-| `target_size` | (150, 150) | ~12× más rápido que 524×524, sin pérdida significativa. Mismo valor que el profesor en Cats_and_Dogs. |
-| `batch_size` | 20 | Gradientes estables, bajo uso de RAM. Mismo valor del profesor. |
+| `target_size` | (150, 150) | ~12× más rápido que 524×524, sin pérdida significativa. |
+| `batch_size` | 20 | Gradientes estables, bajo uso de RAM.  |
 | `class_mode` | `'categorical'` | 9 clases → vector one-hot. Implica `categorical_crossentropy` y `softmax` en la capa de salida. |
 
 ---
