@@ -6,35 +6,9 @@ Esta carpeta contiene la primera fase del proyecto: la **generación/selección 
 
 ---
 
-## 📑 Tabla de contenidos
-
-- [Reconocimiento del uso de IA](#-reconocimiento-del-uso-de-ia)
-- [1. Selección del Dataset](#1-selección-del-dataset)
-- [2. División Train / Validation / Test](#2-división-train--validation--test)
-- [3. Preprocesado de los Datos](#3-preprocesado-de-los-datos)
-- [4. Data Augmentation](#4-data-augmentation)
-- [5. Verificaciones y Visualizaciones](#5-verificaciones-y-visualizaciones)
-
----
-
-## 🤖 Reconocimiento del uso de IA
-
-Para el desarrollo de este trabajo se utilizó el asistente de IA **Claude (Anthropic)** como apoyo en el proceso de aprendizaje.
-
-Específicamente, el asistente apoyó en:
-
-1. La elección y justificación del split **70/15/15** frente a otras alternativas como 80/10/10.
-2. La reorganización de la estructura de carpetas para hacerla compatible con `flow_from_directory` de Keras.
-3. La propuesta de bloques de verificación adicionales no incluidos en los notebooks vistos en clase, como el conteo de imágenes en cada split (para verificar que la separación física en carpetas coincide con el plan teórico) y la visualización de una imagen de cada clase (para confirmar la integridad de los archivos, detectar posibles errores de etiquetado y conocer el tamaño real de las imágenes).
-4. La redacción de este documento de justificación.
-
-> ⚠️ **Importante:** todas las decisiones finales fueron revisadas, comprendidas y validadas personalmente. El código fue ejecutado y verificado en Google Colab, y las decisiones técnicas se contrastaron contra el material proporcionado por en clase.
-
----
-
 ## 1. Selección del Dataset
 
-### 1.1 Por qué RealWaste
+### ¿Por qué RealWaste?
 
 Inicialmente se contempló trabajar con un dataset de imágenes de microscopía de fluorescencia para segmentación de patógenos. Sin embargo, este dataset presentaba múltiples complicaciones:
 
@@ -49,7 +23,7 @@ Por estas razones se optó por [**RealWaste**](https://www.mdpi.com/2078-2489/14
 - Tarea clara de clasificación multi-clase.
 - Tamaño manejable para entrenar en Colab.
 
-### 1.2 Distribución de clases
+### Distribución de clases
 
 | Clase | Imágenes | % |
 |---|---:|---:|
@@ -64,13 +38,13 @@ Por estas razones se optó por [**RealWaste**](https://www.mdpi.com/2078-2489/14
 | Textile Trash | 318 | 6.7% |
 | **TOTAL** | **4,752** | **100%** |
 
-Se observa un **desbalance importante**: Plastic tiene casi 3× más imágenes que Textile Trash (proporción 2.9:1). Se considerará en fases posteriores el uso de `class_weight` durante el entrenamiento.
+Se observa un **desbalance importante**: Plastic tiene casi 3× más imágenes que Textile Trash. Se considerará en fases posteriores el uso de `class_weight` durante el entrenamiento.
 
 ---
 
 ## 2. División Train / Validation / Test
 
-### 2.1 Por qué tres conjuntos en lugar de dos
+### ¿Por qué tres conjuntos en lugar de dos?
 
 Aunque el enunciado pedía solo train y test, se decidió usar **tres conjuntos**:
 
@@ -80,28 +54,13 @@ Aunque el enunciado pedía solo train y test, se decidió usar **tres conjuntos*
 
 Si se usara el test set para ajustar hiperparámetros, el modelo terminaría "optimizado" para ese conjunto y la accuracy reportada no reflejaría su verdadero desempeño.
 
-### 2.2 Por qué 70/15/15 y no 80/10/10
+### ¿Por qué 70/15/15 y no 80/10/10?
 
-Para datasets en el rango 1,000–10,000 imágenes, **70/15/15 es preferible** por tres razones:
-
-**Razón 1 — La diferencia en train es marginal.** Pasar de 3,326 a 3,801 imágenes (+14%) tiene impacto mínimo con transfer learning o data augmentation.
-
-**Razón 2 — La diferencia en validation/test es estadísticamente significativa.**
-
-| Split | Test | Margen de error (95% confianza) |
-|---|---|---|
-| 80/10/10 | 476 imágenes | ±4.5% |
-| 70/15/15 | 713 imágenes | **±3.7%** |
-
-**Razón 3 — La clase minoritaria sería demasiado pequeña con 80/10/10.** Textile Trash, con solo 318 imágenes, quedaría con:
-- 80/10/10: 32 imágenes en validation/test (métricas muy ruidosas).
-- 70/15/15: 48 imágenes en validation/test (50% más estable).
-
-### 2.3 Por qué split estratificado
+Para datasets en el rango 1,000–10,000 imágenes, **70/15/15 es preferible** porque la clase minoritaria sería demasiado pequeña con 80/10/10.** Textile Trash, con solo 318 imágenes, quedaría con:
+- 80/10/10: 32 imágenes en validation/test.
+- 70/15/15: 48 imágenes en validation/test.
 
 El 70/15/15 se respetó **dentro de cada clase**, no sobre el dataset completo. Esto garantiza que cada split mantenga la misma proporción relativa de clases que el dataset original.
-
-### 2.4 Resultado final
 
 | Clase | Train | Val | Test | Total |
 |---|---:|---:|---:|---:|
@@ -114,9 +73,9 @@ El 70/15/15 se respetó **dentro de cada clase**, no sobre el dataset completo. 
 | Plastic | 644 | 138 | 139 | 921 |
 | TextileTrash | 222 | 48 | 48 | 318 |
 | Vegetation | 305 | 65 | 66 | 436 |
-| **TOTAL** | **3,323 (69.9%)** | **715 (15.0%)** | **714 (15.0%)** | **4,752** |
+| **TOTAL** | **3,323** | **715** | **714** | **4,752** |
 
-### 2.5 Estructura física de carpetas
+### Estructura física de carpetas
 
 Se reorganizó para ser compatible con `flow_from_directory` de Keras (primero el split, después las clases):
 
@@ -135,7 +94,7 @@ RealWaste/
 
 ## 3. Preprocesado de los Datos
 
-### 3.1 Librerías utilizadas
+### Librerías
 
 ```python
 import os
@@ -153,7 +112,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 > Se usa `os.path.join()` en lugar de concatenar strings con `+` porque maneja separadores automáticamente según el SO, evita problemas con barras dobles, y es el estándar de la industria.
 
-### 3.2 Escalamiento de píxeles
+### Escalamiento de píxeles
 
 Las imágenes vienen con valores [0, 255]. Se aplicó normalización min-max:
 
@@ -168,7 +127,7 @@ Esto lleva los valores al rango **[0, 1]**, necesario para:
 
 Se aplica a **train, validation y test** porque el modelo debe ver el mismo rango.
 
-### 3.3 Hiperparámetros principales
+### Hiperparámetros principales
 
 | Parámetro | Valor | Justificación |
 |---|---|---|
@@ -180,7 +139,7 @@ Se aplica a **train, validation y test** porque el modelo debe ver el mismo rang
 
 ## 4. Data Augmentation
 
-### 4.1 Qué es y por qué se aplica
+### ¿Qué es y por qué se aplica?
 
 Aplicación de transformaciones aleatorias a las imágenes durante el entrenamiento para generar variaciones artificiales. Cada época el modelo ve versiones diferentes, lo cual:
 
@@ -190,73 +149,19 @@ Aplicación de transformaciones aleatorias a las imágenes durante el entrenamie
 
 Las transformaciones se aplican al vuelo en RAM, sin guardar archivos.
 
-### 4.2 Transformaciones aplicadas
-
-```python
-train_datagen = ImageDataGenerator(
-    rescale = 1./255,
-    rotation_range = 40,
-    width_shift_range = 0.2,
-    height_shift_range = 0.2,
-    shear_range = 0.2,
-    zoom_range = 0.2,
-    horizontal_flip = True
-)
-```
-
-| Parámetro | Valor | Justificación para residuos |
-|---|---|---|
-| `rotation_range` | 40 | Los residuos no tienen orientación canónica |
-| `width_shift_range` | 0.2 | El objeto no siempre está centrado |
-| `height_shift_range` | 0.2 | Idem vertical |
-| `shear_range` | 0.2 | Simula cámara ligeramente inclinada |
-| `zoom_range` | 0.2 | Variabilidad de distancia de captura |
-| `horizontal_flip` | True | La basura no tiene "lado correcto" |
-
-**No se usó `vertical_flip`** porque las fotos tienen orientación natural impuesta por la gravedad. Voltear verticalmente generaría imágenes irrealistas.
-
-### 4.3 Diferencia crítica: train vs validation/test
+### Diferencia crítica: train vs validation/test
 
 | Set | Augmentation | Rescale |
 |---|:---:|:---:|
-| Train | ✅ Sí | ✅ Sí |
-| Validation | ❌ No | ✅ Sí |
-| Test | ❌ No | ✅ Sí |
+| Train |  Sí |  Sí |
+| Validation |  No |  Sí |
+| Test |  No |  Sí |
 
 **Validation:** sin augmentation porque la métrica debe ser estable entre épocas. Si aplicáramos transformaciones, no sabríamos si una mejora viene del modelo o del azar.
 
 **Test:** sin augmentation porque la métrica final debe reflejar el desempeño en imágenes reales, no en versiones artificiales.
 
 **Rescale en los 3:** el modelo aprendió con valores [0, 1]; debe ver el mismo rango en evaluación.Sin embargo, el rescalamineto de test se hace al final, en la etapa de evaluación.
-
----
-
-## 5. Verificaciones y Visualizaciones
-
-### 5.1 Sanity check del split
-
-Se verificó que el split físico coincidiera con el plan teórico (70/15/15). Resultado: ✅ confirmado (3,323 / 715 / 714).
-
-### 5.2 Visualización de una imagen por clase
-
-Sirvió para confirmar que:
-
-- ✅ Las imágenes no están corruptas.
-- ✅ No hay errores de etiquetado entre clases.
-- ✅ Todas son 524×524 (tamaño uniforme).
-
-### 5.3 Visualización del data augmentation
-
-Se generaron 5 versiones de una misma imagen pasándola por el generador. Las transformaciones (rotación, desplazamiento, espejado, zoom) son visiblemente distintas en cada versión.
-
-### 5.4 Guardado de 15 imágenes aumentadas
-
-Mediante `save_to_dir`, se guardaron 15 imágenes aumentadas en `/augmented` como evidencia visual. La elección de 15:
-
-- Suficientes para mostrar variedad sin saturar Drive.
-- Material visual para reportes/presentaciones.
-
-> Durante el entrenamiento real, el modelo procesa **miles** de imágenes aumentadas por época sin guardarlas (el `train_generator` no tiene `save_to_dir` activado).
 
 ---
 
@@ -267,5 +172,5 @@ Mediante `save_to_dir`, se guardaron 15 imágenes aumentadas en `/augmented` com
 
 ---
 
-*Última actualización: [23 de Mayo de 2026]*
+*Última actualización: [27 de Mayo de 2026]*
 
