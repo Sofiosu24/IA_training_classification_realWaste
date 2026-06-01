@@ -178,7 +178,7 @@ Los decimales salen de la fórmula `balanced`, que calcula:
 
 En este caso de las 3323 imágenes y las 9 clases, tomando de ejemplo a Plastic y TextileTrash:
 
-Plastic tiene muchas imágenes, digamos 644 → peso ≈ 3323/(9×644) ≈ 0.573 
+Plastic tiene muchas imágenes, digamos 644 → peso ≈ 3323/(9×644) ≈ 0.573
 TextileTrash tiene pocas, digamos 222 → peso ≈ 3323/(9×222) ≈ 1.663 
 
 Las clases abundantes (Plastic, Metal) reciben peso < 1 por lo que se castiga menos (ya tiene muchos ejemplos) y las escasas (TextileTrash) peso > 1 se castiga más (para que el modelo no la ignore). El efecto sobre el F1 por clase fue notable:
