@@ -96,7 +96,7 @@ train_datagen = ImageDataGenerator(
 test_datagen, val_datagen = ImageDataGenerator(rescale=1./255)    
 ```
 
-> **Lección aprendida:** la normalización de validación/test **debe ser idéntica** a la de entrenamiento (`rescale=1./255`). Un error temprano (`ImageDataGenerator(1./255)`, que asigna el valor a `featurewise_center` en lugar de a `rescale`) dejó validación sin normalizar y disparó la `val_loss` a valores de aproximadamente 500. Corregirlo fue la primera gran mejora 🙂.
+> **Lección del día:** la normalización de validación/test **debe ser idéntica** a la de entrenamiento (`rescale=1./255`). Un error temprano (`ImageDataGenerator(1./255)`, que asigna el valor a `featurewise_center` en lugar de a `rescale`) dejó validación sin normalizar y disparó la `val_loss` a valores de aproximadamente 500. Corregirlo fue la primera gran mejora 🙂.
 
 ---
 
