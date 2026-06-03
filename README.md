@@ -238,7 +238,7 @@ Las confusiones más frecuentes ocurren entre **Plastic ↔ Metal ↔ Miscellane
 | **weighted avg** | 0.49 | 0.49 | 0.48 | 714 |
 
 **Fortalezas** 
-- **Vegetation (0.77)** y **Paper (0.74)**: clases visualmente distintivas.
+- **Vegetation (0.77)** clase visualmente distintivas.
 - **Cardboard (0.63)**: buena recuperación tras aplicar pesos.
 
 **Debilidades** 
